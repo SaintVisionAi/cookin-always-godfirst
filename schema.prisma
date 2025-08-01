@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Character {
+  id           String    @id @default(cuid())
+  name         String
+  description  String?
+  assistantId  String
+  avatarUrl    String?
+  systemPrompt String?
+  temperature  Float?
+  voiceId      String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  metadata     Json?
+  memories     Memory[]
+  interactions Interaction[]
+  quests       Quest[]
+  messages     Message[]
+}
+
+model Memory {
+  id           String    @id @default(cuid())
+  characterId  String
+  content      String
+  timestamp    DateTime
+  importance   Int?
+  tags         String[]
+  metadata     Json?
+  character    Character @relation(fields: [characterId], references: [id])
+}
+
+model World {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  metadata    Json?
+  events      Event[]
+}
+
+model Event {
+  id                String   @id @default(cuid())
+  title             String
+  description       String?
+  worldId           String
+  timestamp         DateTime
+  relatedCharacters String[]
+  metadata          Json?
+  world             World    @relation(fields: [worldId], references: [id])
+}
+
+model User {
+  id           String        @id @default(cuid())
+  name         String
+  email        String?       @unique
+  avatarUrl    String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  metadata     Json?
+  messages     Message[]
+  interactions Interaction[]
+}
+
+model Interaction {
+  id           String    @id @default(cuid())
+  characterId  String
+  userId       String
+  message      String
+  response     String
+  timestamp    DateTime
+  metadata     Json?
+  character    Character @relation(fields: [characterId], references: [id])
+  user         User      @relation(fields: [userId], references: [id])
+}
+
+model Quest {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  assignedTo  String
+  status      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  metadata    Json?
+  character   Character @relation(fields: [assignedTo], references: [id])
+}
+
+model Message {
+  id           String    @id @default(cuid())
+  from         String
+  userId       String
+  characterId  String
+  content      String
+  timestamp    DateTime
+  metadata     Json?
+  character    Character @relation(fields: [characterId], references: [id])
+  user         User      @relation(fields: [userId], references: [id])
+}
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model SystemStatus {
+  id          String   @id @default("status")
+  version     String
+  uptime      Float
+  lastRestart DateTime
+  environment String
+  flags       Json?
+  metadata    Json?
+}
+
