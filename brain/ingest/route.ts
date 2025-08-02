@@ -1,68 +1,87 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { parse } from 'node:path'
 import { createClient } from '@supabase/supabase-js'
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
-import { SupabaseVectorStore } from 'langchain/vectorstores/supabase'
-import { Document } from 'langchain/document'
-import { PDFLoader } from 'langchain/document_loaders/fs/pdf'
-import { NotionLoader } from 'langchain/document_loaders/fs/notion'
-import { TextLoader } from 'langchain/document_loaders/fs/text'
-import { DocxLoader } from 'langchain/document_loaders/fs/docx'
-import { MarkdownLoader } from 'langchain/document_loaders/fs/markdown'
 
-const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
-export async function POST(req: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const { filePath, category = 'General', type = 'internal', companion = 'global' } = await req.json()
-
-    const ext = parse(filePath).ext.toLowerCase()
-    let loader
-
-    switch (ext) {
-      case '.pdf':
-        loader = new PDFLoader(filePath)
-        break
-      case '.notion':
-        loader = new NotionLoader(filePath)
-        break
-      case '.txt':
-        loader = new TextLoader(filePath)
-        break
-      case '.docx':
-        loader = new DocxLoader(filePath)
-        break
-      case '.md':
-        loader = new MarkdownLoader(filePath)
-        break
-      default:
-        return NextResponse.json({ error: 'Unsupported file type' }, { status: 400 })
+    const formData = await request.formData()
+    const file = formData.get('file') as File
+    
+    if (!file) {
+      return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    const docs = await loader.load()
+    const fileContent = await file.text()
+    const { name: fileName } = parse(file.name)
 
-    const taggedDocs = docs.map(
-      doc =>
-        new Document({
-          pageContent: doc.pageContent,
+    // Simple document processing
+    const chunks = splitIntoChunks(fileContent, 1000)
+    
+    // Store in Supabase
+    const results: any[] = []
+    for (let i = 0; i < chunks.length; i++) {
+      const { data, error } = await supabase
+        .from('documents')
+        .insert({
+          content: chunks[i],
           metadata: {
-            ...doc.metadata,
-            category,
-            type,
-            companion,
-          },
+            fileName,
+            chunkIndex: i,
+            totalChunks: chunks.length,
+            fileType: file.type,
+            timestamp: new Date().toISOString()
+          }
         })
-    )
+        .select()
+        .single()
 
-    const vectorstore = await SupabaseVectorStore.fromDocuments(taggedDocs, new OpenAIEmbeddings(), {
-      client: supabase,
-      tableName: 'documents',
-      queryName: 'match_documents',
+      if (error) {
+        console.error('Failed to store chunk:', error)
+        continue
+      }
+
+      results.push(data)
+    }
+
+    return NextResponse.json({
+      message: `Successfully processed ${file.name}`,
+      chunks: results.length,
+      fileName
     })
 
-    return NextResponse.json({ success: true })
-  } catch (err) {
-    console.error('Ingestion failed:', err)
-    return NextResponse.json({ error: 'Ingestion failed' }, { status: 500 })
+  } catch (error) {
+    console.error('File processing error:', error)
+    return NextResponse.json(
+      { error: 'Failed to process file' },
+      { status: 500 }
+    )
   }
+}
+
+function splitIntoChunks(text: string, maxChunkSize: number): string[] {
+  const chunks: string[] = []
+  let currentChunk = ''
+  
+  const sentences = text.split(/[.!?]+/)
+  
+  for (const sentence of sentences) {
+    if (currentChunk.length + sentence.length > maxChunkSize) {
+      if (currentChunk) {
+        chunks.push(currentChunk.trim())
+        currentChunk = ''
+      }
+    }
+    currentChunk += sentence + '. '
+  }
+  
+  if (currentChunk) {
+    chunks.push(currentChunk.trim())
+  }
+  
+  return chunks
 }

@@ -1,7 +1,7 @@
 // 🗣️ SUPERSAL™ NATURAL CONVERSATION API
 // Talk to SuperSal like you talk to a real person - NO CODING NEEDED!
 
-import { supersalVector } from "../services/vectorization"
+import { vectorizationService } from "../services/vectorization"
 import AzureConfigManager from "../config"
 
 export const runtime = "nodejs"
@@ -60,14 +60,11 @@ export async function chatWithSuperSal(userMessage: string, userId: string): Pro
   
   try {
     // 1. Search SuperSal's knowledge for relevant info
-    const knowledgeResults = await supersalVector.searchKnowledge(userMessage, {
-      topK: 5,
-      threshold: 0.6
-    })
+    const knowledgeResults = await vectorizationService.searchKnowledge(userMessage, 5)
     
     // 2. Build context from knowledge
-    const knowledgeContext = knowledgeResults.chunks
-      .map(chunk => chunk.content)
+    const knowledgeContext = knowledgeResults
+      .map(result => result.content)
       .join('\n\n')
     
     // 3. Build SuperSal's personality prompt
@@ -83,7 +80,7 @@ export async function chatWithSuperSal(userMessage: string, userId: string): Pro
     
     return {
       message: azureResponse,
-      confidence: knowledgeResults.chunks.length > 0 ? 0.9 : 0.7,
+      confidence: knowledgeResults.length > 0 ? 0.9 : 0.7,
       mood: salMood
     }
     
@@ -199,12 +196,12 @@ function getFallbackResponse(message: string): string {
 // 📊 GET - Health check for SuperSal chat
 export async function GET(): Promise<Response> {
   try {
-    const brainStatus = await supersalVector.getKnowledgeStats()
+    const brainStatus = await vectorizationService.getBrainStatus()
     
     return new Response(JSON.stringify({
       status: "🗣️ SuperSal Chat: ONLINE",
       ready: true,
-      knowledgeChunks: brainStatus.totalChunks,
+      knowledgeChunks: brainStatus.knowledge_chunks,
       personality: "LEGENDARY",
       mood: "excited",
       message: "Yo bro! I'm ready to chat! Hit me with anything! 🔥",

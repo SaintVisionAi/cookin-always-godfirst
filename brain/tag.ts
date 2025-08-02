@@ -1,14 +1,14 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { openai } from '@/lib/openai';
-import { logCrmEvent } from '@/lib/logging';
+import { openai } from './openai';
+import { logCrmEvent } from './logging';
 
 export async function POST(req: Request) {
   const json = await req.json();
   const { text, user_id } = json;
 
   const session = await getServerSession(authOptions);
-  const userId = user_id || session?.user?.id;
+  const userId = user_id || session?.user?.email;
 
   if (!userId || !text) {
     return new Response('Missing required fields', { status: 400 });

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 
-interface ChatbotUIContextType {
+export interface ChatbotUIContextType {
   selectedAssistant: any;
   setSelectedAssistant: (assistant: any) => void;
   assistants: any[];
@@ -12,6 +12,14 @@ interface ChatbotUIContextType {
   setIsAssistantPickerOpen: (open: boolean) => void;
   assistantCommand: string;
   setAssistantCommand: (command: string) => void;
+  newMessageFiles: any[];
+  chatFiles: any[];
+  slashCommand: string;
+  isFilePickerOpen: boolean;
+  setIsFilePickerOpen: (open: boolean) => void;
+  hashtagCommand: string;
+  focusPrompt: () => void;
+  focusFile: () => void;
 }
 
 const ChatbotUIContext = createContext<ChatbotUIContextType | undefined>(undefined);
@@ -32,6 +40,14 @@ export const ChatbotUIProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [atCommand, setAtCommand] = useState<string>('');
   const [isAssistantPickerOpen, setIsAssistantPickerOpen] = useState<boolean>(false);
   const [assistantCommand, setAssistantCommand] = useState<string>('');
+  const [newMessageFiles, setNewMessageFiles] = useState<any[]>([]);
+  const [chatFiles, setChatFiles] = useState<any[]>([]);
+  const [slashCommand, setSlashCommand] = useState<string>('');
+  const [isFilePickerOpen, setIsFilePickerOpen] = useState<boolean>(false);
+  const [hashtagCommand, setHashtagCommand] = useState<string>('');
+
+  const focusPrompt = () => {};
+  const focusFile = () => {};
 
   return (
     <ChatbotUIContext.Provider
@@ -47,6 +63,14 @@ export const ChatbotUIProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         setIsAssistantPickerOpen,
         assistantCommand,
         setAssistantCommand,
+        newMessageFiles,
+        chatFiles,
+        slashCommand,
+        isFilePickerOpen,
+        setIsFilePickerOpen,
+        hashtagCommand,
+        focusPrompt,
+        focusFile,
       }}
     >
       {children}

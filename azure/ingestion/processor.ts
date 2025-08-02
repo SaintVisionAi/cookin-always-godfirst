@@ -1,11 +1,13 @@
 // 🧠 SUPERSAL™ KNOWLEDGE INGESTION PROCESSOR
 // Simple file processor for feeding SuperSal's brain
 
-import { supersalVector } from "../services/vectorization"
+import { vectorizationService } from "../services/vectorization"
 
 export interface DocumentToIngest {
   content: string
   source: string
+  fileName?: string
+  fileType?: string
   companion: 'supersal' | 'athena' | 'ebytech' | 'partnertech' | 'svtlegal'
   category: string
   tags: string[]
@@ -40,12 +42,23 @@ export async function processDocuments(documents: DocumentToIngest[]): Promise<I
         console.log(`📄 Processing: ${doc.source} (${doc.companion})`)
         
         // Ingest using the vectorization engine
-        const chunkIds = await supersalVector.batchIngestDocuments([doc])
+                // Process document with vectorization service
+        const chunks = [{
+          id: Date.now().toString(),
+          content: doc.content,
+          metadata: {
+            fileName: doc.fileName || 'unknown',
+            chunkIndex: 0,
+            totalChunks: 1,
+            fileType: doc.fileType || 'text',
+            timestamp: new Date().toISOString()
+          }
+        }]
+        await vectorizationService.indexKnowledge(chunks)
         
-        result.filesProcessed++
-        result.chunksCreated += chunkIds.length
-        
-        console.log(`✅ Created ${chunkIds.length} chunks from ${doc.source}`)
+        result.chunksCreated += chunks.length
+
+        console.log(`✅ Created ${chunks.length} chunks from ${doc.source}`)
         
       } catch (error) {
         const errorMsg = `Failed to process ${doc.source}: ${error}`
@@ -361,16 +374,15 @@ WORKFLOW AUTOMATION:
  */
 export async function getBrainStatus() {
   try {
-    const stats = await supersalVector.getKnowledgeStats()
+    const stats = await vectorizationService.getBrainStatus()
     
     return {
-      status: "🧠 SuperSal Brain Status",
-      totalKnowledge: stats.totalChunks,
-      companionBreakdown: stats.companionBreakdown,
-      categoryBreakdown: stats.categoryBreakdown,
-      message: stats.totalChunks > 0 
-        ? `SuperSal's brain contains ${stats.totalChunks} knowledge chunks and is ready to dominate!`
-        : "SuperSal's brain is empty. Run knowledge ingestion to feed the beast!"
+      status: 'success',
+      totalKnowledge: stats.knowledge_chunks,
+      companionBreakdown: {},
+      categoryBreakdown: {},
+      message: stats.knowledge_chunks > 0
+        ? `SuperSal's brain contains ${stats.knowledge_chunks} knowledge chunks and is ready to dominate!`        : "SuperSal's brain is empty. Run knowledge ingestion to feed the beast!"
     }
   } catch (error) {
     return {

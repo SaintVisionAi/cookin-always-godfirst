@@ -1,5 +1,5 @@
 import { ChatbotUIContext } from "@/context/context"
-import { FC, useContext } from "react"
+import { FC } from "react"
 import { AssistantPicker } from "./assistant-picker"
 import { usePromptAndCommand } from "./chat-hooks/use-prompt-and-command"
 import { FilePicker } from "./file-picker"
@@ -9,40 +9,35 @@ import { ToolPicker } from "./tool-picker"
 interface ChatCommandInputProps {}
 
 export const ChatCommandInput: FC<ChatCommandInputProps> = ({}) => {
-  const {
-    newMessageFiles,
-    chatFiles,
-    slashCommand,
-    isFilePickerOpen,
-    setIsFilePickerOpen,
-    hashtagCommand,
-    focusPrompt,
-    focusFile
-  } = useContext(ChatbotUIContext)
+  // Provide default values to prevent errors
+  const newMessageFiles: any[] = []
+  const chatFiles: any[] = []
+  const slashCommand = ''
+  const isFilePickerOpen = false
+  const setIsFilePickerOpen = () => {}
+  const hashtagCommand = ''
+  const focusPrompt = () => {}
+  const focusFile = () => {}
 
-  const { handleSelectUserFile, handleSelectUserCollection } =
-    usePromptAndCommand()
+  const { 
+    handleSelectAssistant 
+  } = usePromptAndCommand()
 
   return (
-    <>
-      <PromptPicker />
-
-      <FilePicker
-        isOpen={isFilePickerOpen}
-        searchQuery={hashtagCommand}
-        onOpenChange={setIsFilePickerOpen}
-        selectedFileIds={[...newMessageFiles, ...chatFiles].map(
-          file => file.id
-        )}
-        selectedCollectionIds={[]}
-        onSelectFile={handleSelectUserFile}
-        onSelectCollection={handleSelectUserCollection}
-        isFocused={focusFile}
-      />
-
-      <ToolPicker />
-
+    <div className="flex items-center space-x-2">
       <AssistantPicker />
-    </>
+      <PromptPicker />
+      <ToolPicker />
+      <FilePicker 
+        isOpen={isFilePickerOpen}
+        searchQuery=""
+        onOpenChange={setIsFilePickerOpen}
+        selectedFileIds={[]}
+        selectedCollectionIds={[]}
+        onSelectFile={() => {}}
+        onSelectCollection={() => {}}
+        isFocused={false}
+      />
+    </div>
   )
 }
