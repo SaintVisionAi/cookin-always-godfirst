@@ -1,0 +1,9 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[298],{3249:function(e,n,t){Promise.resolve().then(t.bind(t,9588))},9588:function(e,n,t){"use strict";t.r(n),t.d(n,{default:function(){return DemoPage}});var r=t(7437),o=t(2265);function DemoPage(){let[e,n]=(0,o.useState)("");async function sendToAgent(){let e=await fetch("/api/agent",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:"Can you tell me about pricing?",language:"EN",email:"demo@customer.com",name:"Ryan Vision"})}),t=await e.json();n(JSON.stringify(t,null,2))}return(0,r.jsxs)("main",{className:"p-4 space-y-4",children:[(0,r.jsx)("h1",{className:"text-xl font-bold",children:"\uD83D\uDCAC Test Agent"}),(0,r.jsx)("button",{className:"bg-black text-white px-4 py-2 rounded",onClick:sendToAgent,children:"Trigger Agent"}),(0,r.jsx)("pre",{className:"bg-gray-100 p-4 rounded text-sm",children:e})]})}},622:function(e,n,t){"use strict";/**
+ * @license React
+ * react-jsx-runtime.production.min.js
+ *
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */var r=t(2265),o=Symbol.for("react.element"),s=(Symbol.for("react.fragment"),Object.prototype.hasOwnProperty),a=r.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner,i={key:!0,ref:!0,__self:!0,__source:!0};function q(e,n,t){var r,c={},u=null,l=null;for(r in void 0!==t&&(u=""+t),void 0!==n.key&&(u=""+n.key),void 0!==n.ref&&(l=n.ref),n)s.call(n,r)&&!i.hasOwnProperty(r)&&(c[r]=n[r]);if(e&&e.defaultProps)for(r in n=e.defaultProps)void 0===c[r]&&(c[r]=n[r]);return{$$typeof:o,type:e,key:u,ref:l,props:c,_owner:a.current}}n.jsx=q,n.jsxs=q},7437:function(e,n,t){"use strict";e.exports=t(622)}},function(e){e.O(0,[971,472,744],function(){return e(e.s=3249)}),_N_E=e.O()}]);

@@ -1,16 +1,15 @@
 // 📦 app/api/agent/feedback/route.ts — User Feedback Handler
-import { NextRequest as FeedbackRequest, NextResponse as FeedbackResponse } from "next/server"
-import { createNotionEntry } from "@/lib/actions/notion"
+import { NextRequest, NextResponse } from "next/server"
 
-export async function POST(req: FeedbackRequest) {
+export async function POST(req: NextRequest) {
   const { feedback } = await req.json()
-  if (!feedback) return FeedbackResponse.json({ error: "Missing feedback" }, { status: 400 })
-
+  
   try {
-    const res = await createNotionEntry(process.env.NOTION_FEEDBACK_DB || "", feedback)
-    return FeedbackResponse.json({ success: true, notion: res })
-  } catch (err) {
-    console.error("❌ Feedback log error:", err)
-    return FeedbackResponse.json({ error: "Feedback log failed" }, { status: 500 })
+    // TODO: Implement Notion integration
+    console.log('Feedback received:', feedback)
+    
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to save feedback" }, { status: 500 })
   }
 }

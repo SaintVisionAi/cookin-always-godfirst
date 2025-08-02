@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       reasoning = `Evaluated via DTI ratio and revenue strength`
     }
 
-    const flags = []
+    const flags: string[] = []
     if (country !== "US") flags.push("📍 Foreign Lending — check cross-border compliance")
     if (!collateral) flags.push("⚠️ No collateral attached")
 

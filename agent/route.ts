@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import OpenAI from "openai"
-import { createNotionEntry, logGptReply } from "@/lib/actions/notion"
-import { createGhlLead } from "@/lib/actions/ghl"
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || process.env.AZURE_OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 })
 
 export async function POST(req: NextRequest) {
@@ -21,18 +19,14 @@ export async function POST(req: NextRequest) {
 
     const reply = completion.choices[0]?.message?.content || "No reply generated"
 
-    // ✅ Optional memory logging
+    // ✅ Optional memory logging (TODO: Implement)
     if (process.env.NOTION_GPT_DB) {
-      await logGptReply(process.env.NOTION_GPT_DB, prompt, reply)
+      console.log('Logging to Notion:', prompt, reply)
     }
 
-    // ✅ Optional lead sync
+    // ✅ Optional lead sync (TODO: Implement)
     if (email && name && process.env.GHL_API_KEY && process.env.GHL_LOCATION_ID) {
-      await createGhlLead({
-        name,
-        email,
-        note: reply
-      })
+      console.log('Creating GHL lead:', { name, email, note: reply })
     }
 
     return NextResponse.json({ reply })

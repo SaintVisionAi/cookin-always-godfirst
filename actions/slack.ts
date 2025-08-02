@@ -6,7 +6,7 @@ export async function sendSlackMessage(text: string) {
     text
   }, {
     headers: {
-      Authorization: \`Bearer \${process.env.SLACK_API_TOKEN}\`
+      Authorization: `Bearer ${process.env.SLACK_API_TOKEN}`
     }
   })
 }

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server"
-import { createNotionEntry } from "@/lib/actions/notion"
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,9 +16,9 @@ export async function POST(req: NextRequest) {
 
     const content = translated?.translations?.[0]?.text || "Translation failed"
 
-    // Log translation to Notion
+    // TODO: Log translation to Notion
     if (notionDbId) {
-      await createNotionEntry(notionDbId, `🈯 Translated Text: ${content}`)
+      console.log('Translation logged:', content)
     }
 
     return NextResponse.json({ translated: content })

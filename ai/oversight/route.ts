@@ -46,7 +46,7 @@ Analyze and prepare integration strategy.
 
     const result = await openai.chat.completions.create({
       model: process.env.OPENAI_DEPLOYMENT || "gpt-4o",
-      messages
+      messages: messages as any
     })
 
     const response = result.choices[0]?.message?.content || "No output generated"

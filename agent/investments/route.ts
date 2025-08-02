@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     }
 
     // M&A Valuation Logic (if provided)
-    let valuation = null
+    let valuation: number | null = null
     if (revenue && ebitda) {
       const ebitdaMultiple = industry?.toLowerCase() === "tech" ? 12 : 6
       valuation = +(ebitda * ebitdaMultiple).toFixed(2)

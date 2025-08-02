@@ -1,5 +1,5 @@
-import { ChatbotUIContext } from "@/context/context"
-import { Tables } from "@/supabase/types"
+import { useChatbotUI } from "@/context/context"
+import { Tables, Assistant } from "@/supabase/types"
 import { IconRobotFace } from "@tabler/icons-react"
 import Image from "next/image"
 import { FC, useContext, useEffect, useRef } from "react"
@@ -15,7 +15,7 @@ export const AssistantPicker: FC<AssistantPickerProps> = ({}) => {
     atCommand,
     isAssistantPickerOpen,
     setIsAssistantPickerOpen
-  } = useContext(ChatbotUIContext)
+  } = useChatbotUI()
 
   const { handleSelectAssistant } = usePromptAndCommand()
 
@@ -35,9 +35,9 @@ export const AssistantPicker: FC<AssistantPickerProps> = ({}) => {
     setIsAssistantPickerOpen(isOpen)
   }
 
-  const callSelectAssistant = (assistant: Tables<"assistants">) => {
+  const callSelectAssistant = (assistant: Assistant) => {
     handleSelectAssistant(assistant)
-    handleOpenChange(false)
+    setIsAssistantPickerOpen(false)
   }
 
   const getKeyDownHandler =
@@ -90,7 +90,7 @@ export const AssistantPicker: FC<AssistantPickerProps> = ({}) => {
                   tabIndex={0}
                   className="hover:bg-accent focus:bg-accent flex cursor-pointer items-center rounded p-2 focus:outline-none"
                   onClick={() =>
-                    callSelectAssistant(item as Tables<"assistants">)
+                    callSelectAssistant(item as Assistant)
                   }
                   onKeyDown={getKeyDownHandler(index)}
                 >

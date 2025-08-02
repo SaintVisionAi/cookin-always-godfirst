@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { logCrmEvent } from '@/utils/logCrmEvent';
 
 export default function SlackBroadcastBot({ insight }: { insight: any }) {
   const [sent, setSent] = useState(false);
@@ -11,7 +12,13 @@ export default function SlackBroadcastBot({ insight }: { insight: any }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ insight }),
     });
+
     setSent(true);
+
+    await logCrmEvent({
+      description: '📢 Insight Broadcasted to Slack',
+      context: { title: insight.title, score: insight.metadata?.score },
+    });
   };
 
   return (
