@@ -1,30 +1,16 @@
-import React from 'react';
-import './globals.css';
-
 export const metadata = {
-  title: 'SuperSal AI - Enterprise AI Platform',
-  description: 'Revolutionary AI platform for enterprise automation and intelligence',
-};
+  title: "SaintVisionAI - HACP Patent Platform",
+  description: "U.S. Patent No. 10,290,222 - Advanced AI Collaboration",
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <html lang="en">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-        <title>SuperSal AI Platform</title>
-        <script src="/supersal-buttons.js" async></script>
-      </head>
-      <body className="min-h-screen bg-background font-sans antialiased">
-        <div id="root">
-          {children}
-        </div>
-      </body>
+      <body className="bg-black text-white">{children}</body>
     </html>
-  );
+  )
 }
