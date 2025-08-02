@@ -1,0 +1,14 @@
+{
+  "name": "supersal-live-deployment",
+  "version": "1.0.0",
+  "description": "SuperSal AI - Live deployment package",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "build": "echo 'Building SuperSal...'",
+    "deploy": "echo 'Deploying to Azure...'"
+  },
+  "dependencies": {
+    "express": "^4.18.0"
+  }
+}
