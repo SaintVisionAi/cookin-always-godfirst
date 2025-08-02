@@ -6,25 +6,25 @@
 echo "🔧 FIXING AZURE AUTHENTICATION FOR SAINTVISIONAI.COM..."
 
 # The error shows:
-# AADSTS50011: The redirect URI 'https://www.saintsai.com/auth/login/aad/callback' 
+# AADSTS50011: The redirect URI 'https://www.saintsal-ai.com/.auth/login/aad/callback' 
 # specified in the request does not match the redirect URIs configured 
-# for the application 'a8c7fc47-ee1f-43cc-955b-31777515e12'
+# for the application 'a8c7fc47-ee1f-43cc-955b-317775f5e12c'
 
 echo "
 🎯 AZURE APP REGISTRATION FIX NEEDED:
 
 1. Go to Azure Portal → App Registrations
-2. Find your app: 'a8c7fc47-ee1f-43cc-955b-31777515e12'
+2. Find your app: 'a8c7fc47-ee1f-43cc-955b-317775f5e12c'
 3. Go to Authentication section
 4. Add these Redirect URIs:
 
-   ✅ https://saintvisionai.com/auth/login/aad/callback
-   ✅ https://www.saintvisionai.com/auth/login/aad/callback  
    ✅ https://saintvisionai.com/api/auth/callback/azure-ad
-   ✅ https://www.saintvisionai.com/api/auth/callback/azure-ad
+   ✅ https://www.saintvisionai.com/api/auth/callback/azure-ad  
+   ✅ https://saintsal-ai.com/api/auth/callback/azure-ad
+   ✅ https://www.saintsal-ai.com/api/auth/callback/azure-ad
    ✅ http://localhost:3000/api/auth/callback/azure-ad (for testing)
 
-5. REMOVE the broken URI: https://www.saintsai.com/auth/login/aad/callback
+5. REMOVE any broken URIs with .auth/login/aad/callback
 
 6. Save changes
 "
